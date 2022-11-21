@@ -2,6 +2,7 @@ package graphql.schema
 
 import graphql.ExecutionInput
 import graphql.TestUtil
+import graphql.schema.fetching.KotlinPojo
 import graphql.schema.somepackage.ClassWithDFEMethods
 import graphql.schema.somepackage.ClassWithInterfaces
 import graphql.schema.somepackage.ClassWithInteritanceAndInterfaces
@@ -548,5 +549,40 @@ class PropertyDataFetcherTest extends Specification {
 
         then:
         result == "bar"
+    }
+
+    def "fetch Kotlin class"() {
+        def pojo = new KotlinPojo("Brad", 42, true, true, 0)
+        def environment = env(pojo)
+
+        when:
+        def fetcher = new PropertyDataFetcher("name")
+        def result = fetcher.get(environment)
+        then:
+        result == "Brad"
+
+        when:
+        fetcher = new PropertyDataFetcher("age")
+        result = fetcher.get(environment)
+        then:
+        result == 42
+
+        when:
+        fetcher = new PropertyDataFetcher("canCode")
+        result = fetcher.get(environment)
+        then:
+        result == true
+
+        when:
+        fetcher = new PropertyDataFetcher("isAwesome")
+        result = fetcher.get(environment)
+        then:
+        result == true
+
+        when:
+        fetcher = new PropertyDataFetcher("isBoolMimic")
+        result = fetcher.get(environment)
+        then:
+        result == 0
     }
 }

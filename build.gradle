@@ -11,6 +11,9 @@ plugins {
     id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
     id "groovy"
     id "me.champeau.jmh" version "0.6.6"
+
+    // Kotlin plugin
+    id 'org.jetbrains.kotlin.jvm' version '1.7.21'
 }
 
 def getDevelopmentVersion() {
@@ -113,6 +116,9 @@ dependencies {
     testAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.35'
     jmh 'org.openjdk.jmh:jmh-core:1.35'
     jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.35'
+
+    // Kotlin stdlib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 shadowJar {
@@ -314,3 +320,20 @@ tasks.withType(GenerateModuleMetadata) {
 test {
     useJUnitPlatform()
 }
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+// Let groovy find Kotlin classes
+//compileTestGroovy.classpath += files(compileTestKotlin.destinationDir)
+// in more recent versions it must be
+compileTestGroovy.classpath += files(compileTestKotlin.destinationDirectory)
